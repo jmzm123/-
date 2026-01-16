@@ -1,0 +1,10 @@
+Milk,牛奶
+Cheese,奶酪
+Yogurt,酸奶
+Butter,黄油
+Eggs,鸡蛋
+Apple,苹果
+Grapes,葡萄
+Strawberry,草莓
+Blueberry,蓝莓
+Lemon,柠檬

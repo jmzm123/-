@@ -1,0 +1,17 @@
+{
+  "name": "food-image-generator",
+  "version": "1.0.0",
+  "description": "Generate food images using Zhipu AI",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
