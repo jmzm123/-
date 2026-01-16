@@ -46,6 +46,60 @@ function readIngredients() {
     }
 }
 
+// 读取并编码参考图片
+function getReferenceImageBase64() {
+    if (fs.existsSync(REFERENCE_IMAGE)) {
+        try {
+            const imageBuffer = fs.readFileSync(REFERENCE_IMAGE);
+            return imageBuffer.toString('base64');
+        } catch (error) {
+            console.warn(`无法读取参考图片 ${REFERENCE_IMAGE}:`, error.message);
+        }
+    }
+    return null;
+}
+
+// 使用 GLM-4V-Flash 分析图片风格
+async function analyzeImageStyle(base64Image, token) {
+    console.log('正在使用 GLM-4V-Flash 分析参考图片风格...');
+    try {
+        const response = await axios.post('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+            model: 'glm-4v-flash',
+            messages: [
+                {
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Please analyze the art style, composition, color palette, and lighting of this image. Provide a concise but descriptive prompt that can be used to generate similar images using an AI image generator. Focus on the visual style keywords. Do not describe the specific object in the image, just the style. Output format: "Style description: [keywords]"'
+                        },
+                        {
+                            type: 'image_url',
+                            image_url: {
+                                url: base64Image
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const content = response.data.choices[0].message.content;
+        // 提取风格描述
+        const styleDescription = content.replace(/^Style description:/i, '').trim();
+        console.log('分析完成! 提取的风格:', styleDescription);
+        return styleDescription;
+    } catch (error) {
+        console.error('图片分析失败:', error.message);
+        return null;
+    }
+}
+
 // 下载并保存图片
 async function downloadImage(url, filepath) {
     const writer = fs.createWriteStream(filepath);
